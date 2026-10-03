@@ -1,5 +1,6 @@
 package net.stella.notsosololeveling;
 
+import com.jcraft.jogg.Packet;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -16,6 +17,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.server.level.ServerPlayer;
+
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -29,6 +34,10 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import net.stella.notsosololeveling.network.OpenIntroPacket;
+import net.stella.notsosololeveling.player.PlayerStoryData;
+import net.stella.notsosololeveling.network.ModNetworking;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(NotSoSoloLeveling.MODID)
@@ -67,6 +76,8 @@ public class NotSoSoloLeveling {
     public NotSoSoloLeveling(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        modEventBus.addListener(ModNetworking::registerPayloads);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
@@ -113,4 +124,18 @@ public class NotSoSoloLeveling {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
+
+        if (event.getEntity() instanceof ServerPlayer player
+        && !PlayerStoryData.hasCompletedIntro(player)){
+
+            PacketDistributor.sendToPlayer(
+                    player,
+                    new OpenIntroPacket()
+            );
+        }
+    }
+
 }
