@@ -30,6 +30,11 @@ public record CompleteIntroPacket() implements CustomPacketPayload {
             IPayloadContext context
     ){
         if (context.player() instanceof ServerPlayer player) {
+
+            NotSoSoloLeveling.LOGGER.info(
+                    "COMPLETE INTRO PACKET RECEIVED FOR {}",
+                    player.getName().getString()
+            );
             PlayerStoryData.setIntroComplete(player, true);
         }
     }

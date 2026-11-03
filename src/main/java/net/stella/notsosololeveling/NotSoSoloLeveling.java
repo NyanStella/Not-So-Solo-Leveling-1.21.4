@@ -1,6 +1,5 @@
 package net.stella.notsosololeveling;
 
-import com.jcraft.jogg.Packet;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -36,8 +35,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import net.stella.notsosololeveling.network.OpenIntroPacket;
-import net.stella.notsosololeveling.player.PlayerStoryData;
 import net.stella.notsosololeveling.network.ModNetworking;
+import net.stella.notsosololeveling.event.IntroProtectionEvents;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(NotSoSoloLeveling.MODID)
@@ -91,6 +90,8 @@ public class NotSoSoloLeveling {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
+        NeoForge.EVENT_BUS.addListener(IntroProtectionEvents::onIncomingDamage);
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
@@ -128,13 +129,14 @@ public class NotSoSoloLeveling {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
 
-        if (event.getEntity() instanceof ServerPlayer player
-        && !PlayerStoryData.hasCompletedIntro(player)){
+        if (event.getEntity() instanceof ServerPlayer player){
+        //&& !PlayerStoryData.hasCompletedIntro(player)){
 
             PacketDistributor.sendToPlayer(
                     player,
                     new OpenIntroPacket()
             );
+
         }
     }
 

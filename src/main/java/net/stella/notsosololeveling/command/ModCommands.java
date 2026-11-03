@@ -6,8 +6,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.stella.notsosololeveling.citizen.CitizenStats;
 import net.stella.notsosololeveling.hunter.HunterRank;
 import net.stella.notsosololeveling.hunter.HunterRankRoller;
+import net.stella.notsosololeveling.hunter.HunterStatCalculator;
+import net.stella.notsosololeveling.hunter.HunterStats;
 
 @EventBusSubscriber(modid = "notsosololeveling")
 
@@ -24,6 +27,40 @@ public final class ModCommands {
                 Commands.literal("nssl")
                         .requires(source -> source.hasPermission(2))
                         .then(
+                                Commands.literal("test_stats")
+                                        .executes(context -> {
+                                        CitizenStats citizenStats =
+                                        new CitizenStats(
+                                                10,
+                                                12,
+                                                8,
+                                                14,
+                                                6
+                                        );
+                                HunterRank rank = HunterRank.D;
+
+                                HunterStats hunterStats =
+                                    HunterStatCalculator.calculate(
+                                            citizenStats,
+                                            rank
+                );
+
+                context.getSource().sendSuccess(
+                        () -> Component.literal(
+                                "D-Rank Test Hunter"
+                                        +"| STR: " + hunterStats.strength()
+                                        +"| AGI: " + hunterStats.agility()
+                                        +"| PER: " + hunterStats.perception()
+                                        +"| VIT: " + hunterStats.vitality()
+                                        +"| INT: " + hunterStats.intelligence()
+                                            ),
+                                                    false
+                                                    );
+                                return 1;
+                                                })
+    )
+                        .then(
+
                                 Commands.literal("roll_rank")
                                         .executes(context -> {
                                             try {
