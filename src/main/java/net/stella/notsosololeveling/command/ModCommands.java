@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.stella.notsosololeveling.citizen.CitizenData;
 import net.stella.notsosololeveling.citizen.CitizenStats;
 import net.stella.notsosololeveling.hunter.HunterRank;
 import net.stella.notsosololeveling.hunter.HunterRankRoller;
@@ -35,10 +36,15 @@ public final class ModCommands {
                                                     .getSource()
                                                     .getPlayerOrException();
 
-                                            CitizenStats citizenStats =
-                                                    CitizenStatsGenerator.generate(
-                                                            player.getRandom()
+                                            CitizenData citizenData =
+                                                    new CitizenData(
+                                                            CitizenStatsGenerator.generate(
+                                                                    player.getRandom()
+                                                            )
                                                     );
+
+                                            CitizenStats citizenStats =
+                                                    citizenData.getBaseStats();
 
                                             double awakeningChance =
                                                     AwakeningRoller.calculateChance(
@@ -71,6 +77,7 @@ public final class ModCommands {
                                             );
 
                                             if (!awakened){
+                                                citizenData.recordAwakeningFailure();
                                                 context.getSource().sendSuccess(
                                                         () -> Component.literal(
                                                                 "Result: Citizen did not awaken. "
@@ -86,7 +93,9 @@ public final class ModCommands {
                                                             player.getRandom()
                                                     );
 
-                                            HunterStats hunterstats =
+                                            citizenData.recordAwakeningSuccess(rank);
+
+                                            HunterStats hunterStats =
                                                     HunterStatCalculator.calculate(
                                                             citizenStats,
                                                             rank
@@ -97,11 +106,11 @@ public final class ModCommands {
                                                             "Result: Awakened as "
                                                             + rank.getDisplayName()
                                                             +"-Rank"
-                                                            +" | STR: " + hunterstats.strength()
-                                                                    +" | AGI: " + hunterstats.agility()
-                                                                    +" | PER: " + hunterstats.perception()
-                                                                    +" | VIT: " + hunterstats.vitality()
-                                                                    +" | INT: " + hunterstats.intelligence()
+                                                            +" | STR: " + hunterStats.strength()
+                                                                    +" | AGI: " + hunterStats.agility()
+                                                                    +" | PER: " + hunterStats.perception()
+                                                                    +" | VIT: " + hunterStats.vitality()
+                                                                    +" | INT: " + hunterStats.intelligence()
                                                     ),
                                                     false
                                             );
@@ -110,6 +119,8 @@ public final class ModCommands {
 
                                         } )
                         )
+
+
                         .then(
 
                                 Commands.literal("roll_rank")
