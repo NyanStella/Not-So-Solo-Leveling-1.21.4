@@ -34,6 +34,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import net.stella.notsosololeveling.citizen.ModEntities;
 import net.stella.notsosololeveling.network.OpenIntroPacket;
 import net.stella.notsosololeveling.network.ModNetworking;
 import net.stella.notsosololeveling.event.IntroProtectionEvents;
@@ -85,6 +86,8 @@ public class NotSoSoloLeveling {
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
+        ModEntities.ENTITY_TYPES.register(modEventBus);
+        modEventBus.addListener(ModEntities::registerAttributes);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
