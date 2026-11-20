@@ -37,6 +37,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.stella.notsosololeveling.network.OpenIntroPacket;
 import net.stella.notsosololeveling.network.ModNetworking;
 import net.stella.notsosololeveling.event.IntroProtectionEvents;
+import net.stella.notsosololeveling.player.PlayerStoryData;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(NotSoSoloLeveling.MODID)
@@ -129,8 +130,8 @@ public class NotSoSoloLeveling {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
 
-        if (event.getEntity() instanceof ServerPlayer player){
-        //&& !PlayerStoryData.hasCompletedIntro(player)){
+        if (event.getEntity() instanceof ServerPlayer player
+        && !PlayerStoryData.hasCompletedIntro(player)){
 
             PacketDistributor.sendToPlayer(
                     player,

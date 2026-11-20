@@ -16,7 +16,6 @@ public final class IntroProtectionEvents {
                 event.getSource()
         );
         if (event.getEntity() instanceof ServerPlayer player
-               // && !PlayerStoryData.hasCompletedIntro(player)
          ) {
             boolean introComplete =
                     PlayerStoryData.hasCompletedIntro(player);
