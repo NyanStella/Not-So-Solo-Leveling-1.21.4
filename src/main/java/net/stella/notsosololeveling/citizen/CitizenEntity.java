@@ -3,11 +3,12 @@ package net.stella.notsosololeveling.citizen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.Level;
 import org.checkerframework.checker.units.qual.C;
 
-public class CitizenEntity extends PathfinderMob{
+public class CitizenEntity extends AgeableMob{
     private static final String CITIZEN_DATA = "citizen_data";
 
     private CitizenData citizenData;
@@ -21,6 +22,21 @@ public class CitizenEntity extends PathfinderMob{
         }
 
         return citizenData;
+    }
+
+    @Override
+    public void aiStep() {
+        boolean wasBaby = isBaby();
+        super.aiStep();
+
+        if (!level().isClientSide() && wasBaby && !isBaby()) {
+            AwakeningRoller.attemptAwakening(getCitizenData(),getRandom());
+        }
+    }
+
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
+        return null;
     }
 
 
