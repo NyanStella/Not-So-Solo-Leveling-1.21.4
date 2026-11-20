@@ -1,19 +1,17 @@
 package net.stella.notsosololeveling.command;
 
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.stella.notsosololeveling.citizen.CitizenData;
-import net.stella.notsosololeveling.citizen.CitizenStats;
+import net.stella.notsosololeveling.citizen.*;
 import net.stella.notsosololeveling.hunter.HunterRank;
 import net.stella.notsosololeveling.hunter.HunterRankRoller;
 import net.stella.notsosololeveling.hunter.HunterStatCalculator;
 import net.stella.notsosololeveling.hunter.HunterStats;
-import net.stella.notsosololeveling.citizen.CitizenStatsGenerator;
-import net.stella.notsosololeveling.citizen.AwakeningRoller;
 
 @EventBusSubscriber(modid = "notsosololeveling")
 
@@ -158,6 +156,32 @@ public final class ModCommands {
                                                 );
                                                 return 0;
                                             }
-                                        })));
+                                        }))
+                        .then(
+                                Commands.literal("awaken")
+                                        .then(Commands.argument("citizen", EntityArgument.entity())
+                                                .executes(context -> {
+                                                    if (!(EntityArgument.getEntity(context, "citizen")
+                                                    instanceof CitizenEntity citizen)) {
+                                                        context.getSource().sendFailure(Component.literal("Choose a citizen."));
+                                                        return 0;
+                                                    }
+
+                                                    CitizenData data = citizen.getCitizenData();
+                                                    if (!AwakeningRoller.attemptAwakening(data, citizen.getRandom())){
+                                                        context.getSource().sendFailure(
+                                                                Component.literal("This citizen has already attempted awakening.")
+                                                        );
+
+                                                        return 0;
+                                                    }
+
+                                                    String message = data.getHunterRank()
+                                                            .map(rank -> "Awakened as " + rank.getDisplayName() + "-Rank!")
+                                                            .orElse("This citizen did not awaken as a hunter.");
+                                                    context.getSource().sendSuccess(() -> Component.literal(message), false);
+                                                    return 1;
+                                                })))
+                        );
     }
 }

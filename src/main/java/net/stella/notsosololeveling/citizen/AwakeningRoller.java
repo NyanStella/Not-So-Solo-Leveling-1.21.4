@@ -1,6 +1,7 @@
 package net.stella.notsosololeveling.citizen;
 
 import net.minecraft.util.RandomSource;
+import net.stella.notsosololeveling.hunter.HunterRankRoller;
 
 public final class AwakeningRoller {
 
@@ -11,6 +12,20 @@ public final class AwakeningRoller {
     private static final double MAXIMUM_CHANCE = 0.40;
 
     private AwakeningRoller(){}
+
+    public static boolean attemptAwakening(CitizenData citizen, RandomSource random){
+        if (citizen.hasAttemptedAwakening()){
+            return false;
+        }
+
+        if (roll(citizen.getBaseStats(), random)){
+            citizen.recordAwakeningSuccess(HunterRankRoller.roll(random));
+        } else{
+            citizen.recordAwakeningFailure();
+        }
+
+        return true;
+    }
 
     public static boolean roll(
             CitizenStats citizenStats,
