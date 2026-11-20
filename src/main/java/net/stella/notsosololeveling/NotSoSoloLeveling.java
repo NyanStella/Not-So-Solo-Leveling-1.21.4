@@ -39,6 +39,7 @@ import net.stella.notsosololeveling.network.OpenIntroPacket;
 import net.stella.notsosololeveling.network.ModNetworking;
 import net.stella.notsosololeveling.event.IntroProtectionEvents;
 import net.stella.notsosololeveling.player.PlayerStoryData;
+import net.stella.notsosololeveling.block.GuildHubBlock;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(NotSoSoloLeveling.MODID)
@@ -49,8 +50,17 @@ public class NotSoSoloLeveling {
     public static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
+    public static final DeferredBlock<GuildHubBlock> GUILD_HUB = BLOCKS.registerBlock(
+            "guild_hub",
+            GuildHubBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0F, 6.0F)
+    );
     // Create a Deferred Register to hold Items which will all be registered under the "examplemod" namespace
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+    public static final DeferredItem<BlockItem> GUILD_HUB_ITEM =
+            ITEMS.registerSimpleBlockItem("guild_hub", GUILD_HUB);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
