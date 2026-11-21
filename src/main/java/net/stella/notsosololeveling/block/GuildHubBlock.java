@@ -26,6 +26,22 @@ public class GuildHubBlock extends Block {
             BlockHitResult hitResult
     ){
        if (level instanceof ServerLevel serverLevel){
+
+           if (player.isShiftKeyDown()){
+               GuildClaims.RecruitResult result = GuildClaims.get(serverLevel)
+                       .recruitStarterCitizen(serverLevel, pos, player.getUUID());
+
+               String message = switch (result){
+                   case RECRUITED -> "A citizen joined your guild.";
+                   case NOT_OWNER ->  "Only the chunk owner can recruit here.";
+                   case ALREADY_RECRUITED ->  "This chunk's starter citizen has already joined.";
+                   case NO_SPACE ->  "Clear some space above the Guild Hub.";
+                   case SPAWN_FAILED -> "The citizen couldn't join. Try again.";
+               };
+
+               player.displayClientMessage(Component.literal(message), true);
+               return InteractionResult.SUCCESS;
+           }
            ChunkPos chunk = new ChunkPos(pos);
            GuildClaims.ClaimResult result = GuildClaims.get(serverLevel)
                    .claim(chunk, player.getUUID());
