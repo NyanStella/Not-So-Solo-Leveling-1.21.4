@@ -15,5 +15,7 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(ModEntities.CITIZEN.get(), CitizenRenderer::new);
+
+        event.registerEntityRenderer(ModEntities.JINWOO.get(), JinwooRenderer::new);
     }
 }
